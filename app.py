@@ -22,12 +22,14 @@ filename = open('model_outputs/scaler.pkl', 'rb')
 scaler = pickle.load(filename)
 filename.close()
 
-filename = open('model_outputs/rf_model.pkl', 'rb')
-rf_model = pickle.load(filename)
+#filename = open('model_outputs/rf_model.pkl', 'rb')
+filename = open('analysis/optimization/tree_grid_model.pkl', 'rb')
+tree_grid_model = pickle.load(filename)
 filename.close()
 
-filename = open('model_outputs/xgb_model.pkl', 'rb')
-xgb_model = pickle.load(filename)
+#filename = open('model_outputs/xgb_model.pkl', 'rb')
+filename = open('analysis/optimization/xgb_grid_model.pkl', 'rb')
+xgb_grid_model = pickle.load(filename)
 filename.close()
 
 
@@ -149,13 +151,13 @@ app.layout = html.Div(children=[
             html.Div([
                 html.H3('Predicted Digit'),
                 html.Br(),
-                html.H4('Random Forest Model:'),
-                html.H6(id='rf-prediction', children='...'),
-                html.H6(id='rf-probability', children='waiting for inputs'),
+                html.H4('Decision Tree Classifier Model:'),
+                html.H6(id='tree-grid-prediction', children='...'),
+                html.H6(id='tree-grid-probability', children='waiting for inputs'),
                 html.Br(),
-                html.H4('XGBoost Model:'),
-                html.H6(id='xgb-prediction', children='...'),
-                html.H6(id='xgb-probability', children='waiting for inputs'),
+                html.H4('XGBoost Classifier Model:'),
+                html.H6(id='xgb-grid-prediction', children='...'),
+                html.H6(id='xgb-grid-probability', children='waiting for inputs'),
             ], className='three columns'),
         ], className="twelve columns"),
         html.Br(),
@@ -168,10 +170,10 @@ app.layout = html.Div(children=[
 ######### CALLBACK
 @app.callback(
                 Output('output-figure', 'figure'),
-                Output('rf-prediction', 'children'),
-                Output('rf-probability', 'children'),
-                Output('xgb-prediction', 'children'),
-                Output('xgb-probability', 'children'),
+                Output('tree-grid-prediction', 'children'),
+                Output('tree-grid-probability', 'children'),
+                Output('xgb-grid-prediction', 'children'),
+                Output('xgb-grid-probability', 'children'),
               Input('canvas', 'json_data'))
 def update_data(string):
     if string:
@@ -203,23 +205,21 @@ def update_data(string):
         some_digit_scaled = scaler.transform([some_digit_array])
 
         # make a prediction: Random Forest
-        rf_pred = rf_model.predict(some_digit_scaled)
-        rf_prob_array = rf_model.predict_proba(some_digit_scaled)
-        rf_prob = max(rf_prob_array[0])
-        rf_prob=round(rf_prob*100,2)
+        tree_grid_pred = tree_grid_model.predict(some_digit_scaled)
+        tree_grid_prob_array = tree_grid_model.predict_proba(some_digit_scaled)
+        tree_grid_prob = max(tree_grid_prob_array[0])
+        tree_grid_prob = round(tree_grid_prob*100, 2)
 
         # make a prediction: XG Boost
-        xgb_pred = xgb_model.predict(some_digit_scaled)
-        xgb_prob_array = xgb_model.predict_proba(some_digit_scaled)
-        xgb_prob = max(xgb_prob_array[0])
-        xgb_prob=round(xgb_prob*100,2)
+        xgb_grid_pred = xgb_grid_model.predict(some_digit_scaled)
+        xgb_grid_prob_array = xgb_grid_model.predict_proba(some_digit_scaled)
+        xgb_grid_prob = max(xgb_grid_prob_array[0])
+        xgb_grid_prob = round(xgb_grid_prob*100, 2)
 
     else:
         raise PreventUpdate
 
-
-    return   fig,  f'Digit: {rf_pred[0]}', f'Probability: {rf_prob}%', f'Digit: {xgb_pred[0]}', f'Probability: {xgb_prob}%'
-
+    return   fig,  f'Digit: {tree_grid_pred[0]}', f'Probability: {tree_grid_prob}%', f'Digit: {xgb_grid_pred[0]}', f'Probability: {xgb_grid_prob}%'
 
 if __name__ == '__main__':
     app.run_server(debug=True)

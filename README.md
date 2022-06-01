@@ -1,6 +1,13 @@
 # Digit Classifier app
 
-View the deployed application here: https://xgb-digit-classifier.herokuapp.com/
+View the deployed application here: https://vibha-digits-predictor.herokuapp.com/
+ 
+### Using the previously created and optimized models.
+
+* Tree Grid Search
+* XGBoost Grid Search
+
+# ------------------------------------------------
 
 This repo demonstrates how to build a classifier using 
 * mnist dataset
